@@ -2,36 +2,24 @@
 <html>
   <head>
     <title>Evan.pro Live Status</title>
-    <meta charset="utf-8" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
     <h3>Evan.pro Status</h3>
-
-    <strong>At home?</strong> <span id="location">...</span> (<span id="location-last"></span>)
-
+    <strong>At home?</strong> <span id="home"></span> <span id="home-last"></span><br>
+    <strong>Working? </strong> <span id="working"></span>
     <pre id="content" style="white-space: pre-wrap;"></pre>
-
     <script type="text/javascript">
-      var CLIENT_ID = '984822153053-iiqgu17c9ab674vp00nldsjr8m8nisik.apps.googleusercontent.com';
-      var API_KEY = 'AIzaSyBQ99fER-whXfPU-AAxo52x9t11PzyuBi0';
-      // Array of API discovery doc URLs for APIs used by the quickstart
-      var DISCOVERY_DOCS = ["https://sheets.googleapis.com/$discovery/rest?version=v4"];
+      var CLIENT_ID      = '984822153053-iiqgu17c9ab674vp00nldsjr8m8nisik.apps.googleusercontent.com';
+      var API_KEY        = 'AIzaSyBQ99fER-whXfPU-AAxo52x9t11PzyuBi0';
+      var DISCOVERY_DOCS = ['https://sheets.googleapis.com/$discovery/rest?version=v4'];
+      var SCOPES         = 'https://www.googleapis.com/auth/spreadsheets.readonly';
 
-      // Authorization scopes required by the API; multiple scopes can be
-      // included, separated by spaces.
-      var SCOPES = "https://www.googleapis.com/auth/spreadsheets.readonly";
-
-      /**
-       *  On load, called to load the auth2 library and API client library.
-       */
       function handleClientLoad() {
         gapi.load('client:auth2', initClient);
       }
 
-      /**
-       *  Initializes the API client library and sets up sign-in state
-       *  listeners.
-       */
       function initClient() {
         gapi.client.init({
           apiKey: API_KEY,
@@ -41,58 +29,56 @@
         }).then(function () {
           renderStatus();
         }, function(error) {
-          appendPre(JSON.stringify(error, null, 2));
+          console.log(JSON.stringify(error, null, 2));
         });
-      }
-
-      /**
-       * Append a pre element to the body containing the given message
-       * as its text node. Used to display the results of the API call.
-       *
-       * @param {string} message Text to be placed in pre element.
-       */
-      function appendPre(message) {
-        var pre = document.getElementById('content');
-        var textContent = document.createTextNode(message + '\n');
-        pre.appendChild(textContent);
       }
 
       function renderStatus() {
         gapi.client.sheets.spreadsheets.values.get({
           spreadsheetId: '1orLxmwADYAHb9o8j98XUCABUPuMJ5JCskraSh5FjqUU',
-          range: 'phone-stats!B4:C5',
+          range: 'phone-stats!B4:C6',
         }).then(function(response) {
           var range = response.result;
           if (range.values.length < 2) {
-            appendPre('No data found.');
+            console.log('No data found.');
             return;
           }
           // Not-In-Range of Home WiFi
           if (range.values[0][0] === '0') {
-            document.getElementById('location').innerHTML = 'No';
-            document.getElementById('location-last').innerHTML = timeago().format(range.values[0][1]);
-            appendPre('Phone\'s last wifi scan ('+document.getElementById('location-last').innerHTML+') did not see home wifi.');
+            document.getElementById('home').innerHTML = 'No';
+            document.getElementById('home-last').innerHTML = timeago().format(range.values[0][1]);
+            console.log('Phone\'s last wifi scan ('+document.getElementById('home-last').innerHTML+') did not see home wifi.');
           }
           // Not Connected To Home WiFi
           if (range.values[1][0] === '0') {
-            document.getElementById('location').innerHTML = 'No';
-            document.getElementById('location-last').innerHTML = timeago().format(range.values[1][1]);
-            appendPre('Phone disconnected from home wifi '+document.getElementById('location-last').innerHTML+'.');
+            document.getElementById('home').innerHTML = 'No';
+            document.getElementById('home-last').innerHTML = timeago().format(range.values[1][1]);
+            console.log('Phone disconnected from home wifi '+document.getElementById('home-last').innerHTML+'.');
           }
           // Connected To Home WiFi
           if (range.values[1][0] === '1') {
-            document.getElementById('location').innerHTML = 'Yes';
-            document.getElementById('location-last').innerHTML = timeago().format(range.values[1][1]);
-            appendPre('Phone connected to home wifi '+document.getElementById('location-last').innerHTML);
+            document.getElementById('home').innerHTML = 'Yes';
+            document.getElementById('home-last').innerHTML = timeago().format(range.values[1][1]);
+            console.log('Phone connected to home wifi '+document.getElementById('home-last').innerHTML);
           }
           // In-Range of Home WiFi
           if (range.values[0][0] === '1') {
-            document.getElementById('location').innerHTML = 'Yes';
-            document.getElementById('location-last').innerHTML = timeago().format(range.values[0][1]);
-            appendPre('Phone\'s last wifi scan ('+document.getElementById('location-last').innerHTML+') identified home wifi.');
+            document.getElementById('home').innerHTML = 'Yes';
+            document.getElementById('home-last').innerHTML = timeago().format(range.values[0][1]);
+            console.log('Phone\'s last wifi scan ('+document.getElementById('home-last').innerHTML+') identified home wifi.');
+          }
+          // Harvest timer started
+          if (range.values[2][0] === '1') {
+            document.getElementById('working').innerHTML = 'Yes';
+            console.log('Client billing timer started '+range.values[2][1]+'.');
+          }
+          // Harvest timer stopped
+          if (range.values[2][0] === '0') {
+            document.getElementById('working').innerHTML = 'No';
+            console.log('Client billing timer stopped '+range.values[2][1]+'.');
           }
         }, function(response) {
-          appendPre('Error: ' + response.result.error.message);
+          console.log('Error: ' + response.result.error.message);
         });
       }
 
