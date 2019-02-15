@@ -59,7 +59,7 @@
           if (range.values[1][0] === '1') {
             document.getElementById('home').innerHTML = 'Yes';
             document.getElementById('home-last').innerHTML = timeago().format(range.values[1][1]);
-            console.log('Phone connected to home wifi '+document.getElementById('home-last').innerHTML);
+            console.log('Phone connected to home wifi '+document.getElementById('home-last').innerHTML+'.');
           }
           // In-Range of Home WiFi
           if (range.values[0][0] === '1') {
