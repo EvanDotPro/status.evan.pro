@@ -31,7 +31,8 @@
   </head>
   <body>
     <strong>At home:</strong> <span id="home"></span> <sup>(<span id="home-last"></span>)</sup><br>
-    <strong>Working:</strong> <span id="working"></span>
+    <strong>Working:</strong> <span id="working"></span><br>
+    <strong>Phone Silenced / DND:</strong> <span id="dnd"></span>
     <blockquote id="status-message"></blockquote>
     <script type="text/javascript">
       var CLIENT_ID      = '984822153053-iiqgu17c9ab674vp00nldsjr8m8nisik.apps.googleusercontent.com';
@@ -66,7 +67,7 @@
       function renderAutoStats() {
         gapi.client.sheets.spreadsheets.values.get({
           spreadsheetId: '1orLxmwADYAHb9o8j98XUCABUPuMJ5JCskraSh5FjqUU',
-          range: 'phone-stats!B4:C6',
+          range: 'phone-stats!B4:C7',
         }).then(function(response) {
           var range = response.result;
           if (range.values.length < 2) {
@@ -106,6 +107,16 @@
           if (range.values[2][0] === '0') {
             document.getElementById('working').innerHTML = 'No';
             console.log('Client billing timer stopped '+range.values[2][1]+'.');
+          }
+          // Phone silenced
+          if (range.values[3][0] === 'on') {
+            document.getElementById('working').innerHTML = 'Yes';
+            console.log('Phone silenced '+range.values[2][1]+'.');
+          }
+          // Phone not silenced
+          if (range.values[3][0] === 'off') {
+            document.getElementById('working').innerHTML = 'No';
+            console.log('Phone unsilenved '+range.values[2][1]+'.');
           }
         }, function(response) {
           console.log('Error: ' + response.result.error.message);
