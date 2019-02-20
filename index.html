@@ -110,13 +110,13 @@
           }
           // Phone silenced
           if (range.values[3][0] === 'on') {
-            document.getElementById('working').innerHTML = 'Yes';
+            document.getElementById('dnd').innerHTML = 'Yes';
             console.log('Phone silenced '+range.values[2][1]+'.');
           }
           // Phone not silenced
           if (range.values[3][0] === 'off') {
-            document.getElementById('working').innerHTML = 'No';
-            console.log('Phone unsilenved '+range.values[2][1]+'.');
+            document.getElementById('dnd').innerHTML = 'No';
+            console.log('Phone unsilenced '+range.values[2][1]+'.');
           }
         }, function(response) {
           console.log('Error: ' + response.result.error.message);
