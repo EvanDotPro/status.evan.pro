@@ -109,12 +109,12 @@
             console.log('Client billing timer stopped '+range.values[2][1]+'.');
           }
           // Phone silenced
-          if (range.values[3][0] === 'on') {
+          if (range.values[3][0] === '1') {
             document.getElementById('dnd').innerHTML = 'Yes';
             console.log('Phone silenced '+range.values[2][1]+'.');
           }
           // Phone not silenced
-          if (range.values[3][0] === 'off') {
+          if (range.values[3][0] === '0') {
             document.getElementById('dnd').innerHTML = 'No';
             console.log('Phone unsilenced '+range.values[2][1]+'.');
           }
